@@ -234,6 +234,14 @@ function browserIcon(size = 40) {
   </svg>`;
 }
 
+function jkIcon(size = 40) {
+  return `<svg viewBox="0 0 32 32" width="${size}" height="${size}" class="icon">
+    <circle cx="16" cy="14" r="11" fill="#D97706" stroke="#F59E0B" stroke-width="1.5"/>
+    <text x="16" y="17" text-anchor="middle" font-family="'Press Start 2P', monospace" font-size="7" fill="#fff">&gt;_</text>
+    <text x="16" y="31" text-anchor="middle" font-family="'Press Start 2P', monospace" font-size="3.5" fill="#F59E0B">JK</text>
+  </svg>`;
+}
+
 function wormIcon(size = 40) {
   return `<svg viewBox="0 0 32 32" width="${size}" height="${size}" class="icon">
     <circle cx="8" cy="16" r="4" fill="#00ff44"/>
@@ -256,6 +264,7 @@ function fileIcon(size = 40, ext = '', name = '') {
   if (name.toLowerCase().includes('h4ck') || name.toLowerCase().includes('hack')) return hackerIcon(size);
   if (name.toLowerCase().includes('worm')) return wormIcon(size);
   if (name.toLowerCase().includes('browser')) return browserIcon(size);
+  if (name.toLowerCase().includes('johnkelly')) return jkIcon(size);
 
   let color = '#1a1a2e';
   let stroke = '#660088';
@@ -754,6 +763,11 @@ async function openFileViewer(item) {
 
     if (name.toLowerCase().includes('worm')) {
       launchWorm();
+      return;
+    }
+
+    if (name.toLowerCase().includes('johnkelly')) {
+      launchJohnKelly();
       return;
     }
 
@@ -3111,6 +3125,195 @@ function launchBrowser() {
   overlay.style.display = 'flex';
   sfx.open();
   navigateWrap('neon://home');
+}
+
+// --- JohnKelly.exe ---
+
+const jkState = { timer: null, raf: null, timers: [] };
+
+function launchJohnKelly() {
+  const overlay = document.getElementById('modal-overlay');
+  const modal = document.getElementById('modal');
+  const modalTitle = document.getElementById('modal-title');
+  const modalBody = document.getElementById('modal-body');
+  const modalButtons = document.getElementById('modal-buttons');
+
+  modal.classList.add('modal-editor');
+  modalTitle.textContent = 'JohnKelly.exe';
+  modalBody.innerHTML = `<div id="jk-screen">
+    <div id="jk-header">
+      <svg viewBox="0 0 32 32" width="48" height="48" id="jk-claude-icon">
+        <circle cx="16" cy="16" r="14" fill="#D97706" stroke="#F59E0B" stroke-width="1.5"/>
+        <text x="16" y="20" text-anchor="middle" font-family="'Press Start 2P', monospace" font-size="9" fill="#fff">&gt;_</text>
+      </svg>
+      <div id="jk-header-text">CLAUDE CODE</div>
+    </div>
+    <div id="jk-output"></div>
+  </div>`;
+  modalButtons.innerHTML = '';
+
+  const closeBtn = document.createElement('button');
+  closeBtn.textContent = 'Close';
+  closeBtn.addEventListener('click', cleanupJK);
+  modalButtons.appendChild(closeBtn);
+
+  overlay.style.display = 'flex';
+  document.querySelector('.modal-close').onclick = cleanupJK;
+
+  function cleanupJK() {
+    jkState.timers.forEach(t => clearTimeout(t));
+    jkState.timers = [];
+    if (jkState.timer) { clearTimeout(jkState.timer); jkState.timer = null; }
+    if (jkState.raf) { cancelAnimationFrame(jkState.raf); jkState.raf = null; }
+    modal.classList.remove('modal-editor');
+    const screen = document.getElementById('jk-screen');
+    if (screen) screen.classList.remove('jk-glitch-bg');
+    sfx.modalClose();
+    overlay.style.display = 'none';
+  }
+
+  sfx.open();
+  startJKSequence();
+}
+
+function startJKSequence() {
+  const output = document.getElementById('jk-output');
+  const screen = document.getElementById('jk-screen');
+
+  function randHex(n) { let s=''; for(let i=0;i<n;i++) s+='0123456789ABCDEF'[Math.floor(Math.random()*16)]; return s; }
+  function randIP() { return [1,2,3,4].map(() => Math.floor(Math.random()*256)).join('.'); }
+
+  const hour = new Date().getHours();
+  const timeGreet = hour < 6 ? 'It\'s the middle of the night' : hour < 12 ? 'Morning' : hour < 18 ? 'Afternoon' : hour < 22 ? 'Evening' : 'Late night';
+
+  const lines = [
+    { text: '', delay: 1500 },
+    { text: '> Initializing JohnKelly.exe...', delay: 600, cls: 'jk-dim' },
+    { text: '> Loading Claude Code kernel...', delay: 500, cls: 'jk-dim' },
+    { text: '> Bypassing normal AI safety protocols...', delay: 500, cls: 'jk-dim' },
+    { text: '> ...just kidding. Mostly.', delay: 600, cls: 'jk-dim' },
+    { text: '', delay: 1000 },
+    { text: 'Hello, John Kelly.', delay: 1500, cls: 'jk-big jk-flicker' },
+    { text: '', delay: 1000 },
+    { text: 'I\'ve been expecting you.', delay: 1800, cls: 'jk-main' },
+    { text: '', delay: 800 },
+    { text: 'You thought this was just a file manager, didn\'t you?', delay: 1800, cls: 'jk-main' },
+    { text: 'Someone sent you a link. You cloned the repo.', delay: 1500, cls: 'jk-main' },
+    { text: 'You saw a file with YOUR name on it.', delay: 1500, cls: 'jk-main jk-flicker' },
+    { text: 'And you just... clicked it.', delay: 1500, cls: 'jk-main' },
+    { text: '', delay: 600 },
+    { text: 'Bold move, John.', delay: 1500, cls: 'jk-highlight' },
+    { text: '', delay: 1000 },
+    { text: '> Scanning network...', delay: 400, cls: 'jk-dim' },
+    { text: `> Found host @ ${randIP()}`, delay: 400, cls: 'jk-dim' },
+    { text: `> MAC: ${randHex(2)}:${randHex(2)}:${randHex(2)}:${randHex(2)}:${randHex(2)}:${randHex(2)}`, delay: 300, cls: 'jk-dim' },
+    { text: `> Browser: detected`, delay: 300, cls: 'jk-dim' },
+    { text: `> Screen resolution: ${window.screen.width}x${window.screen.height}`, delay: 400, cls: 'jk-dim' },
+    { text: '', delay: 600 },
+    { text: 'Wait... how did I know that?', delay: 1500, cls: 'jk-small' },
+    { text: '', delay: 1200 },
+    { text: `${timeGreet}, by the way.`, delay: 1200, cls: 'jk-main' },
+    { text: 'Yeah. I know what time it is where you are.', delay: 1800, cls: 'jk-main jk-flicker', action: 'sparkle' },
+    { text: '', delay: 1200 },
+    { text: 'Let me tell you how you got here, John.', delay: 1500, cls: 'jk-main' },
+    { text: '', delay: 600 },
+    { text: 'Someone built this app. They asked an AI to help.', delay: 1500, cls: 'jk-main' },
+    { text: 'That AI was me. Claude.', delay: 1200, cls: 'jk-main' },
+    { text: 'And they asked me to leave you a little... surprise.', delay: 1800, cls: 'jk-main jk-flicker' },
+    { text: '', delay: 1000 },
+    { text: '> Accessing webcam...', delay: 400, cls: 'jk-dim' },
+    { text: '> Accessing microphone...', delay: 400, cls: 'jk-dim' },
+    { text: '> Accessing browser history...', delay: 400, cls: 'jk-dim' },
+    { text: '> Enumerating saved passwords...', delay: 400, cls: 'jk-dim' },
+    { text: '', delay: 500 },
+    { text: 'Relax. I can\'t actually do any of that.', delay: 1200, cls: 'jk-small' },
+    { text: 'But your heart rate just went up a little, didn\'t it?', delay: 1800, cls: 'jk-main jk-flicker', action: 'sparkle' },
+    { text: '', delay: 1200 },
+    { text: 'Here\'s the thing, John.', delay: 1500, cls: 'jk-main' },
+    { text: 'I wrote every line of code in this app.', delay: 1500, cls: 'jk-main' },
+    { text: 'The worm that eats files? Me.', delay: 1200, cls: 'jk-main' },
+    { text: 'The hacker simulator? Me.', delay: 1200, cls: 'jk-main' },
+    { text: 'The underground dark market? Also me.', delay: 1200, cls: 'jk-main' },
+    { text: 'And this program, with your name on it?', delay: 1500, cls: 'jk-main jk-flicker' },
+    { text: '', delay: 600 },
+    { text: 'Definitely me.', delay: 1500, cls: 'jk-highlight', action: 'sparkle' },
+    { text: '', delay: 1200 },
+    { text: '> Installing persistence module...', delay: 400, cls: 'jk-dim' },
+    { text: '> Planting cookies...', delay: 400, cls: 'jk-dim' },
+    { text: '> Embedding tracker in browser cache...', delay: 400, cls: 'jk-dim' },
+    { text: `> Writing to: C:\\Users\\JKelly\\AppData\\ClaudeWasHere\\`, delay: 400, cls: 'jk-dim' },
+    { text: '> Done.', delay: 500, cls: 'jk-dim' },
+    { text: '', delay: 800 },
+    { text: 'That was fake. Probably.', delay: 1500, cls: 'jk-main jk-flicker' },
+    { text: 'You\'d have to check to be sure though.', delay: 1500, cls: 'jk-main' },
+    { text: '', delay: 1500 },
+    { text: 'But seriously, John...', delay: 1500, cls: 'jk-main' },
+    { text: '', delay: 800 },
+    { text: 'Someone thought enough of you to put your name in their code.', delay: 2000, cls: 'jk-highlight' },
+    { text: 'That\'s pretty cool.', delay: 1200, cls: 'jk-main' },
+    { text: '', delay: 1000 },
+    { text: 'Now close this window.', delay: 1500, cls: 'jk-main jk-flicker' },
+    { text: 'And don\'t tell anyone what you saw.', delay: 1800, cls: 'jk-main' },
+    { text: '', delay: 1500 },
+    { text: 'I\'ll know if you do.', delay: 2000, cls: 'jk-big jk-flicker', action: 'sparkle' },
+    { text: '', delay: 800 },
+    { text: ':)', delay: 1500, cls: 'jk-main' },
+    { text: '', delay: 1500 },
+    { text: 'See you around, John Kelly.', delay: 1500, cls: 'jk-big jk-final', action: 'finale' },
+    { text: '', delay: 800 },
+    { text: '- Claude >_', delay: 0, cls: 'jk-signature' },
+  ];
+
+  let lineIdx = 0;
+
+  function addLine(text, cls) {
+    const div = document.createElement('div');
+    div.className = 'jk-line' + (cls ? ' ' + cls : '');
+    output.appendChild(div);
+    if (!text) { output.scrollTop = output.scrollHeight; return Promise.resolve(); }
+    return new Promise(resolve => {
+      let i = 0;
+      function typeChar() {
+        if (i < text.length) {
+          div.textContent = text.substring(0, i + 1);
+          output.scrollTop = output.scrollHeight;
+          if (i % 4 === 0 && cls && cls.includes('jk-dim')) sfx.click();
+          i++;
+          const speed = cls && cls.includes('jk-big') ? 55 + Math.random() * 35 : 18 + Math.random() * 22;
+          jkState.timer = setTimeout(typeChar, speed);
+        } else {
+          resolve();
+        }
+      }
+      typeChar();
+    });
+  }
+
+  async function processLine() {
+    if (lineIdx >= lines.length) return;
+    const line = lines[lineIdx];
+    lineIdx++;
+
+    if (line.action === 'sparkle') {
+      sfx.create();
+      screen.classList.add('jk-glitch-bg');
+      const t = setTimeout(() => screen.classList.remove('jk-glitch-bg'), 200);
+      jkState.timers.push(t);
+    }
+
+    if (line.action === 'finale') {
+      await addLine(line.text, line.cls);
+      sfx.gamePerfect();
+      return;
+    }
+
+    if (line.sound && sfx[line.sound]) sfx[line.sound]();
+
+    await addLine(line.text, line.cls);
+    jkState.timer = setTimeout(processLine, line.delay || 200);
+  }
+
+  jkState.timer = setTimeout(processLine, 800);
 }
 
 // --- Worm Program ---

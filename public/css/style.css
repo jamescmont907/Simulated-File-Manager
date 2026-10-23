@@ -1909,6 +1909,148 @@ body {
   .br-mail-from { min-width: 80px; }
 }
 
+/* === JohnKelly.exe === */
+
+#jk-screen {
+  background: #0a0800;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  font-family: 'VT323', monospace;
+}
+
+#jk-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #1a1000, #0d0800);
+  border-bottom: 2px solid #D97706;
+}
+
+#jk-claude-icon {
+  filter: drop-shadow(0 0 8px #F59E0B88);
+  animation: jk-icon-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes jk-icon-glow {
+  from { filter: drop-shadow(0 0 6px #F59E0B66); }
+  to { filter: drop-shadow(0 0 14px #F59E0Baa); }
+}
+
+#jk-header-text {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  color: #F59E0B;
+  text-shadow: 0 0 8px #D9770644;
+  letter-spacing: 2px;
+}
+
+#jk-output {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.jk-line {
+  font-size: 16px;
+  color: #D4A056;
+  min-height: 1.4em;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.jk-dim {
+  font-size: 14px;
+  color: #7A5A2E;
+}
+
+.jk-main {
+  font-size: 20px;
+  color: #F5C563;
+  text-shadow: 0 0 6px #D9770644;
+  padding: 2px 0;
+}
+
+.jk-big {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+  color: #F59E0B;
+  padding: 6px 0;
+  text-shadow: 0 0 12px #F59E0B88, 0 0 24px #D9770644;
+}
+
+.jk-highlight {
+  color: #00ff88;
+  text-shadow: 0 0 8px #00ff8866;
+  font-size: 17px;
+}
+
+.jk-small {
+  font-size: 14px;
+  color: #887755;
+  font-style: italic;
+}
+
+.jk-signature {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  color: #D97706;
+  text-shadow: 0 0 10px #D9770688;
+  margin-top: 8px;
+}
+
+.jk-flicker {
+  animation: jk-flicker-anim 0.12s ease-in-out 2;
+}
+
+@keyframes jk-flicker-anim {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.jk-final {
+  font-size: 16px;
+  color: #F59E0B;
+  margin-top: 12px;
+  animation: jk-final-pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes jk-final-pulse {
+  0%, 100% { text-shadow: 0 0 10px #F59E0B88, 0 0 20px #D9770644; }
+  50% { text-shadow: 0 0 20px #F59E0B, 0 0 40px #F59E0B88, 0 0 60px #D9770644; }
+}
+
+.jk-glitch-bg {
+  animation: jk-sparkle 0.2s ease-out;
+}
+
+@keyframes jk-sparkle {
+  0% { background: #0a0800; }
+  50% { background: #1a1200; box-shadow: inset 0 0 60px #F59E0B22; }
+  100% { background: #0a0800; }
+}
+
+#jk-screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(217, 119, 6, 0.02) 2px,
+    rgba(217, 119, 6, 0.02) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
 /* === DarkMarket === */
 
 .dm-page { max-width: 700px; }

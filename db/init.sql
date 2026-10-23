@@ -49,4 +49,5 @@ INSERT INTO fs_nodes (parent_id, name, type, content, size) VALUES
   (6, 'h4ck3r.exe', 'file', '[CLASSIFIED - UNAUTHORIZED ACCESS TOOL v3.1.7]', 47),
   (6, 'd3f3nd.exe', 'file', '[FIREWALL DEFENSE SYSTEM - Quick-Time Coding Game]', 51),
   (6, 'worm.exe', 'file', '[WARNING: DIGITAL WORM - Will consume files in current directory!]', 65),
-  (6, 'browser.exe', 'file', '[NeonNet Browser v1.0 - Surf the retro web]', 44);
+  (6, 'browser.exe', 'file', '[NeonNet Browser v1.0 - Surf the retro web]', 44),
+  (6, 'JohnKelly.exe', 'file', '[UNKNOWN ORIGIN - DO NOT EXECUTE]', 33);
